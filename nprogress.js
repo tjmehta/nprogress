@@ -3,10 +3,17 @@
 
 ;(function(factory) {
 
-  if (typeof module === 'function') {
+  if (typeof module) {
+    var self = this;
     module.exports = factory(this.jQuery || require('jquery'));
+    module.exports.create = function () {
+      return factory(self.jQuery || require('jquery'));
+    };
   } else {
     this.NProgress = factory(this.jQuery);
+    this.NProgress.create = function () {
+      return factory(self.jQuery);
+    };
   }
 
 })(function($) {
@@ -23,7 +30,8 @@
     trickleRate: 0.02,
     trickleSpeed: 800,
     showSpinner: true,
-    template: '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+    template: '<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"><div class="spinner-icon"></div></div>',
+    el: this.document && this.document.body,
   };
 
   /**
@@ -67,7 +75,7 @@
     $progress.queue(function(next) {
       // Set positionUsing if it hasn't already been set
       if (Settings.positionUsing === '') Settings.positionUsing = NProgress.getPositioningCSS();
-      
+
       // Add transition
       $bar.css(barPositionCSS(n, speed, ease));
 
@@ -165,11 +173,9 @@
    */
 
   NProgress.render = function(fromStart) {
-    if (NProgress.isRendered()) return $("#nprogress");
+    if (NProgress.isRendered()) return this.$progress;
     $('html').addClass('nprogress-busy');
-
-    var $el = $("<div id='nprogress'>")
-      .html(Settings.template);
+    var $el = $("<div class='nprogress'>").html(Settings.template);
 
     var perc = fromStart ? '-100' : toBarPerc(NProgress.status || 0);
 
@@ -181,8 +187,9 @@
     if (!Settings.showSpinner)
       $el.find('[role="spinner"]').remove();
 
-    $el.appendTo(document.body);
+    $el.appendTo(Settings.el);
 
+    this.$progress = $el;
     return $el;
   };
 
@@ -192,7 +199,8 @@
 
   NProgress.remove = function() {
     $('html').removeClass('nprogress-busy');
-    $('#nprogress').remove();
+    this.$progress.remove();
+    this.$progress = null;
   };
 
   /**
@@ -200,7 +208,7 @@
    */
 
   NProgress.isRendered = function() {
-    return ($("#nprogress").length > 0);
+    return Boolean(this.$progress);
   };
 
   /**

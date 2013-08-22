@@ -1,10 +1,10 @@
 /* Make clicks pass-through */
-#nprogress {
+.nprogress {
   pointer-events: none;
   -webkit-pointer-events: none;
 }
 
-#nprogress .bar {
+.nprogress .bar {
   background: #29d;
 
   position: fixed;
@@ -17,7 +17,7 @@
 }
 
 /* Fancy blur effect */
-#nprogress .peg {
+.nprogress .peg {
   display: block;
   position: absolute;
   right: 0px;
@@ -34,7 +34,7 @@
 }
 
 /* Remove these to get rid of the spinner */
-#nprogress .spinner {
+.nprogress .spinner {
   display: block;
   position: fixed;
   z-index: 100;
@@ -42,7 +42,7 @@
   right: 15px;
 }
 
-#nprogress .spinner-icon {
+.nprogress .spinner-icon {
   width: 14px;
   height: 14px;
 
